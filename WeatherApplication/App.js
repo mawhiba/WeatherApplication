@@ -1,16 +1,21 @@
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator, TextInput } from 'react-native';
+import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 
 export default class App extends React.Component {
   constructor(props){
     super(props);
-    this.state = {isLoadig: true , searchInput: ''};
+    this.state = {isLoadig: true , searchInput: '', location: null, errorMessage: null};
+    
     
   }
 
   componentDidMount(){
+
+    
+
     return fetch('http://api.weatherstack.com/current?access_key=15aded31bfadc2ea76087228274aaa88&query=London') 
     .then((response) => response.json())
     .then((responseJSON) => {
