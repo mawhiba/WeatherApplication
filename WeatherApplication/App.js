@@ -5,6 +5,7 @@ import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
 import { Ionicons } from '@expo/vector-icons';
 
+
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -36,6 +37,7 @@ export default class App extends React.Component {
 
   }
 
+  //Get current location
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -149,8 +151,8 @@ export default class App extends React.Component {
           <Text style={styles.wethersDescription}>{this.state.dataSource.current.weather_descriptions[0]}</Text>
           <Text style={styles.temp}>{this.state.dataSource.current.temperature}</Text>
           <Text style={styles.cityName}>{this.state.dataSource.location.name}</Text>
-          <Text style={styles.humidity}>Humidity : {this.state.dataSource.current.humidity}</Text>
-          <Text style={styles.humidity}>Wind Speed : {this.state.dataSource.current.wind_speed}</Text>
+          <Text style={styles.humidity}>Humidity : {this.state.dataSource.current.humidity}%</Text>
+          <Text style={styles.humidity}>Wind Speed : {this.state.dataSource.current.wind_speed} mph</Text>
         </View>
         </ImageBackground>
     );
@@ -163,13 +165,19 @@ export default class App extends React.Component {
 
 const styles = StyleSheet.create({
   container1: {
-    flex: 1,
+    //flex: 1,
     flexDirection: 'row',
-    paddingTop: 30,
+    marginTop: 30,
     justifyContent: 'center',
+    alignSelf: 'center',
+    backgroundColor: '#rgba(255,255 ,255,0.3)',
+    borderColor: '#d6d7da',
+    borderRadius: 6,
+    height: 30,
+    width: 280,
   },
   container2: {
-    flex: 50,
+    flex: 60,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
@@ -195,32 +203,31 @@ const styles = StyleSheet.create({
   textBox: {
     height: 30,
     width: 280,
-    borderColor: '#d6d7da',
-    backgroundColor: '#rgba(255,255 ,255,0.3)',
-    borderRadius: 6,
     padding: 5,
+    //color: 'darkgray',
   },
   temp: {
     //marginTop: 50,
+    //alignItems: 'flex-end',
     fontSize: 150,
-    fontFamily: 'Helvetica',
+    fontFamily: 'Avenir-Heavy',
     color: 'white',
   },
   cityName: {
     //marginTop: 20,
-    fontSize: 40,
-    fontFamily: 'Helvetica',
+    fontSize: 45,
+    fontFamily: 'AvenirNext-Regular',
     color: 'white'
   },
   wethersDescription: {
     //marginTop: 30,
     fontSize: 20,
-    fontFamily: 'Helvetica',
+    fontFamily: 'AvenirNext-Regular',
     color: 'white'
   },
   humidity: {
-    fontSize: 30,
-    fontFamily: 'Helvetica',
+    fontSize: 20,
+    fontFamily: 'AvenirNext-Regular',
     color: 'white',
   }
 });
