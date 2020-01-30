@@ -3,6 +3,7 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator, TextInput, Image, 
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
+import { Ionicons } from '@expo/vector-icons';
 
 export default class App extends React.Component {
   constructor(props) {
@@ -14,8 +15,25 @@ export default class App extends React.Component {
       location: null,
       latitude: null,
       longitude: null,
-      errorMessage: null
+      errorMessage: null,
+      //weatherDescription: null,
+      weatherIcon:null,
     };
+  }
+
+
+
+  componentDidMount() {
+
+    if (Platform.OS === 'android' && !Constants.isDevice) {
+      this.setState({
+        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
+      });
+    } else {
+      this._getLocationAsync();
+    }
+
+
   }
 
   _getLocationAsync = async () => {
@@ -31,7 +49,7 @@ export default class App extends React.Component {
     //console.log(this.state.location);
     let latitude = this.state.location.coords.latitude;
     this.setState({ latitude });
-    let longitude = this.location.coords.longitude;
+    let longitude = this.state.location.coords.longitude;
     this.setState({ longitude })
 
     let url = 'http://api.weatherstack.com/current?access_key=15aded31bfadc2ea76087228274aaa88&query=' + this.state.latitude + ',' + this.state.longitude
@@ -51,17 +69,6 @@ export default class App extends React.Component {
         console.error(error);
       });
   };
-
-  componentDidMount() {
-
-    if (Platform.OS === 'android' && !Constants.isDevice) {
-      this.setState({
-        errorMessage: 'Oops, this will not work on Sketch in an Android emulator. Try it on your device!',
-      });
-    } else {
-      this._getLocationAsync();
-    }
-  }
 
   async getWeatherInfo() {
     return fetch('http://api.weatherstack.com/current?access_key=15aded31bfadc2ea76087228274aaa88&query=' + this.state.searchInput)
@@ -88,6 +95,33 @@ export default class App extends React.Component {
         </View>
       )
     }
+    const weatherDescription = this.state.dataSource.current.weather_descriptions[0];
+    let icon = null
+    console.log(typeof weatherDescription)
+    
+    if (weatherDescription === 'Sunny') {
+      icon = <Ionicons name="ios-sunny" size={100} color="white" />
+        
+    }
+    else if (weatherDescription === 'Overcast') {
+      icon = <Ionicons name="ios-cloudy" size={100} color="white" />
+    }
+    else if (weatherDescription === 'Partly cloudy') {
+      icon = <Ionicons name="ios-partly-sunny" size={100} color="white" />
+    }
+    else if (weatherDescription === 'Rain' || 'Rainy' || 'Raining') {
+      icon = <Ionicons name="ios-rainy" size={100} color="white" />
+    }
+    else if (weatherDescription === 'Fog' || 'Fogy') {
+      icon = <Ionicons name="weather-fog" size={100} color="white" />
+    }
+    else if (weatherDescription === 'Lightning') {
+      icon = <Ionicons name="weather-lightning" size={100} color="white" />
+    }
+    else if (weatherDescription === 'Lightning') {
+      icon = <Ionicons name="weather-lightning-rainy" size={100} color="white" />
+    }
+
 
     // let text = 'Waiting..';
     // if (this.state.errorMessage) {
@@ -103,18 +137,22 @@ export default class App extends React.Component {
       <ImageBackground source={require('./assets/background2.jpg')} style={styles.bgImage}>
         <View style={styles.container1}>
           <TextInput
-            style={styles.UserInput}
+            style={styles.textBox}
             placeholder="Enter city name"
             onChangeText={(text) => this.setState({ searchInput: text })}
             value={this.state.searchInput}
             onSubmitEditing={() => this.getWeatherInfo()}
           />
+        </View>
+        <View style={styles.container2}>
+          {icon}
+          <Text style={styles.wethersDescription}>{this.state.dataSource.current.weather_descriptions[0]}</Text>
           <Text style={styles.temp}>{this.state.dataSource.current.temperature}</Text>
           <Text style={styles.cityName}>{this.state.dataSource.location.name}</Text>
-          
-
+          <Text style={styles.humidity}>Humidity : {this.state.dataSource.current.humidity}</Text>
+          <Text style={styles.humidity}>Wind Speed : {this.state.dataSource.current.wind_speed}</Text>
         </View>
-      </ImageBackground >
+        </ImageBackground>
     );
   }
 }
@@ -126,13 +164,27 @@ export default class App extends React.Component {
 const styles = StyleSheet.create({
   container1: {
     flex: 1,
-    width: '100%',
-    height: '100%',
-    alignItems: 'center',
-    //backgroundColor: '#F5FCFF',
-    flexDirection: 'column',
-    padding: 30, 
+    flexDirection: 'row',
+    paddingTop: 30,
+    justifyContent: 'center',
   },
+  container2: {
+    flex: 50,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    // borderColor: 'white',
+    // borderWidth: 1,
+  },
+  container3: {
+    flex: 2,
+    alignItems: 'center',
+    // width: 300,
+    // height: 300,
+    //alignItems: 'flex-end',
+    //paddingRight: 30,
+  },
+  
 
   bgImage: {
     flex: 1,
@@ -140,26 +192,35 @@ const styles = StyleSheet.create({
     height: '100%',
 
   },
-  UserInput: {
+  textBox: {
     height: 30,
     width: 280,
     borderColor: '#d6d7da',
     backgroundColor: '#rgba(255,255 ,255,0.3)',
-    //opacity: 1,
     borderRadius: 6,
-    //borderWidth: 1,
     padding: 5,
   },
   temp: {
-    marginTop: 50,
-    fontSize: 80,
-    fontFamily: 'Georgia',
-    color: 'white'
+    //marginTop: 50,
+    fontSize: 150,
+    fontFamily: 'Helvetica',
+    color: 'white',
   },
   cityName: {
-    marginTop: 30,
+    //marginTop: 20,
     fontSize: 40,
-    fontFamily: 'Georgia',
+    fontFamily: 'Helvetica',
     color: 'white'
+  },
+  wethersDescription: {
+    //marginTop: 30,
+    fontSize: 20,
+    fontFamily: 'Helvetica',
+    color: 'white'
+  },
+  humidity: {
+    fontSize: 30,
+    fontFamily: 'Helvetica',
+    color: 'white',
   }
 });
