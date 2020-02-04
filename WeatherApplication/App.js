@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, TextInput, Image, ImageBackground } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, TextInput, Image, ImageBackground, Alert, TouchableWithoutFeedback } from 'react-native';
 import Constants from 'expo-constants';
 import * as Location from 'expo-location';
 import * as Permissions from 'expo-permissions';
@@ -12,13 +12,14 @@ export default class App extends React.Component {
     this.state = {
       isLoadig: true,
       dataSource: null,
+      forcastDataSource: null,
       searchInput: null,
       location: null,
       latitude: null,
       longitude: null,
       errorMessage: null,
       //weatherDescription: null,
-      weatherIcon:null,
+      weatherIcon: null,
     };
   }
 
@@ -37,7 +38,7 @@ export default class App extends React.Component {
 
   }
 
-  //Get current location
+  //Get current location :
   _getLocationAsync = async () => {
     let { status } = await Permissions.askAsync(Permissions.LOCATION);
     if (status !== 'granted') {
@@ -54,9 +55,31 @@ export default class App extends React.Component {
     let longitude = this.state.location.coords.longitude;
     this.setState({ longitude })
 
+    //Get current location:
+    this.getCurrentLocation();
+
+
+    //Forcast:
+    // let url_forcast = 'https://api.weatherstack.com/forecast?access_key=15aded31bfadc2ea76087228274aaa88&query=' + this.state.latitude + ',' + this.state.longitude + '&forecast_days=1'
+    // fetch(url_forcast)
+    //   .then((response) => response.json())
+    //   .then((responseJSON) => {
+    //     console.log(responseJSON)
+    //     this.setState({
+    //       isLoadig: false,
+    //       forcastDataSource: responseJSON,
+    //     }, function () {
+
+    //     });
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
+  };
+
+  getCurrentLocation() {
     let url = 'http://api.weatherstack.com/current?access_key=15aded31bfadc2ea76087228274aaa88&query=' + this.state.latitude + ',' + this.state.longitude
-    //console.log("this is url : ",url)
-    return fetch(url)
+    fetch(url)
       .then((response) => response.json())
       .then((responseJSON) => {
         console.log(responseJSON)
@@ -70,7 +93,7 @@ export default class App extends React.Component {
       .catch((error) => {
         console.error(error);
       });
-  };
+  }
 
   async getWeatherInfo() {
     return fetch('http://api.weatherstack.com/current?access_key=15aded31bfadc2ea76087228274aaa88&query=' + this.state.searchInput)
@@ -99,11 +122,14 @@ export default class App extends React.Component {
     }
     const weatherDescription = this.state.dataSource.current.weather_descriptions[0];
     let icon = null
-    console.log(typeof weatherDescription)
-    
+    let favorite_icon = null
+    //console.log(typeof weatherDescription)
+
+    favorite_icon = <Ionicons style={{ padding: 40 }} name="favorite-border" size={30} color="white" />
+
     if (weatherDescription === 'Sunny') {
       icon = <Ionicons name="ios-sunny" size={100} color="white" />
-        
+
     }
     else if (weatherDescription === 'Overcast') {
       icon = <Ionicons name="ios-cloudy" size={100} color="white" />
@@ -146,6 +172,12 @@ export default class App extends React.Component {
             onSubmitEditing={() => this.getWeatherInfo()}
           />
         </View>
+        <View>
+          <TouchableWithoutFeedback onPress = {() => }>
+            <Image source={require('./assets/passion.png')} style={styles.fav_icon} />
+          </TouchableWithoutFeedback>
+
+        </View>
         <View style={styles.container2}>
           {icon}
           <Text style={styles.wethersDescription}>{this.state.dataSource.current.weather_descriptions[0]}</Text>
@@ -154,7 +186,7 @@ export default class App extends React.Component {
           <Text style={styles.humidity}>Humidity : {this.state.dataSource.current.humidity}%</Text>
           <Text style={styles.humidity}>Wind Speed : {this.state.dataSource.current.wind_speed} mph</Text>
         </View>
-        </ImageBackground>
+      </ImageBackground>
     );
   }
 }
@@ -177,7 +209,7 @@ const styles = StyleSheet.create({
     width: 280,
   },
   container2: {
-    flex: 60,
+    flex: 50,
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'column',
@@ -192,7 +224,7 @@ const styles = StyleSheet.create({
     //alignItems: 'flex-end',
     //paddingRight: 30,
   },
-  
+
 
   bgImage: {
     flex: 1,
@@ -229,5 +261,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontFamily: 'AvenirNext-Regular',
     color: 'white',
+  },
+  fav_icon: {
+    width: 25,
+    height: 25,
+    marginHorizontal: 270,
+    marginTop: 10
   }
 });
