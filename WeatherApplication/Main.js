@@ -20,8 +20,8 @@ class Main extends React.Component {
             latitude: null,
             longitude: null,
             errorMessage: null,
-            //weatherDescription: null,
             weatherIcon: null,
+            buttonPressed: false,
         };
     }
 
@@ -78,6 +78,7 @@ class Main extends React.Component {
     }
 
     async getWeatherInfo() {
+        this.textInput.clear()
         return fetch('http://api.weatherstack.com/current?access_key=15aded31bfadc2ea76087228274aaa88&query=' + this.state.searchInput)
             .then((response) => response.json())
             .then((responseJSON) => {
@@ -113,6 +114,13 @@ class Main extends React.Component {
             });
     }
 
+    // buttonPressed(){
+    //     this.setState.buttonPressed = true
+    //     this.setState({
+
+    //     })
+    // }
+
 
     render() {
         if (this.state.isLoadig) {
@@ -124,9 +132,16 @@ class Main extends React.Component {
         }
         const weatherDescription = this.state.dataSource.current.weather_descriptions[0];
         let icon = null
-        let showFavorite = null
 
-        showFavorite = <Ionicons name="ios-menu" size={100} color="white" />
+
+        const like = <TouchableWithoutFeedback onPress={() => { this.setState({buttonPressed : true}) ; this.props.dispatch({ type: AddCity, cityInfo: { city: this.state.dataSource.location.name, temp: this.state.dataSource.current.temperature } }) }}>
+                        <Image source={require('./assets/favorite.png')} style={styles.fav_icon} />
+                    </TouchableWithoutFeedback>
+
+        const dislike = <TouchableWithoutFeedback onPress={() => { this.setState({buttonPressed : false}) ; this.props.dispatch({ type: DeleteCity,  }) }}>
+                        <Image source={require('./assets/star.png')} style={styles.fav_icon2} />
+                    </TouchableWithoutFeedback>
+
 
         if (weatherDescription === 'Sunny') {
             icon = <Ionicons name="ios-sunny" size={100} color="white" />
@@ -162,15 +177,17 @@ class Main extends React.Component {
                             onChangeText={(text) => this.setState({ searchInput: text })}
                             value={this.state.searchInput}
                             onSubmitEditing={() => this.getWeatherInfo()}
-                            clearTextOnFocus = {true}
+                            clearTextOnFocus={true}
                             clearButtonMode='always'
+                            ref={input => { this.textInput = input }}
                         />
                     </View>
-                    
+
                     <View>
-                        <TouchableWithoutFeedback onPress={() => this.props.dispatch({ type: AddCity, city: this.state.dataSource.location.name })}>
-                            <Image source={require('./assets/passion.png')} style={styles.fav_icon} />
-                        </TouchableWithoutFeedback>
+                        {/* <TouchableWithoutFeedback onPress={() => { this.buttonPressed(); this.props.dispatch({ type: AddCity, cityInfo: { city: this.state.dataSource.location.name, temp: this.state.dataSource.current.temperature } }) }}>
+                            <Image source={require('./assets/favorite.png')} style={styles.fav_icon} />
+                        </TouchableWithoutFeedback> */}
+                        {this.state.buttonPressed ? dislike : like}
                     </View>
 
                 </View>
@@ -189,7 +206,8 @@ class Main extends React.Component {
                     <TouchableWithoutFeedback onPress={() => this.props.navigation.navigate('FavoriteScreen', {
                         name: 'Mawhiba',
                         text: "hello from Main",
-                        onGetWeatherInfoFromFav: (city_name) => this.getWeatherInfo2(city_name)
+                        onGetWeatherInfoFromFav: (city_name) => this.getWeatherInfo2(city_name),
+
                     })}>
                         <Image source={require('./assets/list.png')} style={styles.list_icon} />
                     </TouchableWithoutFeedback>
@@ -203,8 +221,6 @@ class Main extends React.Component {
 const props = store => ({
     cities: store.cities,
 })
-
-const mainObject = new Main()
 
 
 export default connect(props)(Main);
@@ -268,7 +284,14 @@ const styles = StyleSheet.create({
         width: 26,
         height: 26,
         marginLeft: 7,
-        marginTop: 3
+        marginTop: 1
+    },
+    fav_icon2: {
+        width: 26,
+        height: 26,
+        marginLeft: 7,
+        marginTop: 1,
+        position: 'absolute'
     },
     list_icon: {
         width: 26,
