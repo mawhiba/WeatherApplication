@@ -16,6 +16,7 @@ const Screen = createStackNavigator({
   },
   FavoriteScreen: {
     screen: Favorite,
+  
   },
 })
 

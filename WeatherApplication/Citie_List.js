@@ -1,5 +1,6 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ActivityIndicator, Animated } from "react-native";
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 export default class CitiesList extends React.Component {
     

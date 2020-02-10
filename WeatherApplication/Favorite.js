@@ -4,13 +4,14 @@ import { connect } from "react-redux";
 import { AddCity, DeleteCity, cityInfo } from './constants/index';
 import Main from './Main.js';
 import Citie_List from './Citie_List.js';
+import Swipeable from 'react-native-gesture-handler/Swipeable';
 
 class CitiesList extends React.Component {
 
-    addCity(city_name) {
+    addCity(city_name, city_temp) {
         this.props.dispatch({
             type: AddCity,
-            city: city_name,
+            cityName: city_name,
             cityTemp: city_temp
         })
     }

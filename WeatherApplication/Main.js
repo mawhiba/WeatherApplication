@@ -114,13 +114,6 @@ class Main extends React.Component {
             });
     }
 
-    // buttonPressed(){
-    //     this.setState.buttonPressed = true
-    //     this.setState({
-
-    //     })
-    // }
-
 
     render() {
         if (this.state.isLoadig) {
@@ -184,9 +177,6 @@ class Main extends React.Component {
                     </View>
 
                     <View>
-                        {/* <TouchableWithoutFeedback onPress={() => { this.buttonPressed(); this.props.dispatch({ type: AddCity, cityInfo: { city: this.state.dataSource.location.name, temp: this.state.dataSource.current.temperature } }) }}>
-                            <Image source={require('./assets/favorite.png')} style={styles.fav_icon} />
-                        </TouchableWithoutFeedback> */}
                         {this.state.buttonPressed ? dislike : like}
                     </View>
 
