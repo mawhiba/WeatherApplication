@@ -11,12 +11,19 @@ const Screen = createStackNavigator({
   MainScreen: {
     screen: Main,
     navigationOptions: {
-      header: null
+      header: null,
     }
   },
   FavoriteScreen: {
     screen: Favorite,
-  
+    navigationOptions: {
+      title: 'Favorite Screen',
+      headerTintColor: "white",
+      headerStyle: {
+        backgroundColor: '#494947'
+      }
+    },
+    
   },
 })
 

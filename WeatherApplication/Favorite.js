@@ -1,10 +1,11 @@
 import React from "react";
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from "react-native";
+import { View, Text, FlatList, TouchableOpacity, StyleSheet, ImageBackground } from "react-native";
 import { connect } from "react-redux";
 import { AddCity, DeleteCity, cityInfo } from './constants/index';
 import Main from './Main.js';
 import Citie_List from './Citie_List.js';
 import Swipeable from 'react-native-gesture-handler/Swipeable';
+
 
 class CitiesList extends React.Component {
 
@@ -16,10 +17,10 @@ class CitiesList extends React.Component {
         })
     }
 
-    deleteCity(index) {
+    deleteCity(item) {
         this.props.dispatch({
             type: DeleteCity,
-            cityIndex: index
+            city: item.cityName
         })
     }
 
@@ -37,36 +38,38 @@ class CitiesList extends React.Component {
         this.props.navigation.goBack()
     }
 
-    renderSeparator = () => {  
-        return (  
-            <View  
-                style={{  
-                    height: 1,  
-                    width: "100%",  
-                    backgroundColor: "#A9A9A9",  
-                }}  
-            />  
-        );  
-    }; 
+    renderSeparator = () => {
+        return (
+            <View
+                style={{
+                    height: 1,
+                    width: "100%",
+                    backgroundColor: "#A9A9A9",
+                }}
+            />
+        );
+    };
 
     render() {
         return (
-            <View style={{ flex: 1, paddingTop: 10 }}>
-                <FlatList style={styles.itemInFlatlist}
-                    data={this.props.cities}
-                    showsVerticalScrollIndicator={true}
-                    renderItem={({ item, index }) => (
-                        // <View style = {styles.flatview}>
-                        //     <TouchableOpacity onPress={() => this.onPress(item)} >
-                        //         <Text style = {styles.listItem}>{item}</Text>
-                        //     </TouchableOpacity>
-                        // </View>
-                        <Citie_List cityObj = {item} onPressFunction={() => this.onPress(item.cityName)}/>
-
-                    )}
-                    ItemSeparatorComponent={this.renderSeparator}
-                />
-            </View>
+            <ImageBackground source={require('./assets/background5.jpg')} style={styles.bgImage}>
+                <View style={{ flex: 1, paddingTop: 10 }}>
+                    <FlatList style={styles.itemInFlatlist}
+                        data={this.props.cities}
+                        showsVerticalScrollIndicator={true}
+                        keyExtractor={(item, index) => item.cityName}
+                        renderItem={({ item, index }) => (
+                            // <View style = {styles.flatview}>
+                            //     <TouchableOpacity onPress={() => this.onPress(item)} >
+                            //         <Text style = {styles.listItem}>{item}</Text>
+                            //     </TouchableOpacity>
+                            // </View>
+                            <Citie_List cityObj={item} onPressFunction={() => this.onPress(item.cityName)} pressToDelete={() => this.deleteCity(item)} />
+                        )}
+                        ItemSeparatorComponent={this.renderSeparator}
+                    />
+                </View>
+            </ImageBackground>
 
         )
     }
@@ -85,10 +88,17 @@ const styles = StyleSheet.create({
         //borderRadius: 2,
     },
     listItem: {
-        padding: 10,  
+        padding: 10,
         height: 44,
         fontFamily: 'AvenirNext-Regular',
         fontSize: 18,
+        color : '#494947'
 
+    },
+    bgImage: {
+        flex: 1,
+        width: '100%',
+        height: '100%',
+        opacity: 0.7
     },
 })
